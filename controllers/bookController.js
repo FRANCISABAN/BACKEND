@@ -23,7 +23,7 @@ export const createBook = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(error.statusCode).json({ error: error.message})
   }
 };
 
@@ -39,27 +39,27 @@ export const editBook = async (req, res) => {
             success: true,
             message: updatedBook
         });
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({
-            error: "Internal Server Error"
-        });
+    } catch (error) {
+        console.error(error);
+        res.status(error.statusCode).json({ error: error.message });
+      
     }
 };
 
 export const deleteBook = async (req, res) => {
+  try {
     const { id } = req.params;
 
-    try {
-        const deletedBook = await bookService.deleteBook(parseInt(id));
-        res.status(200).json({
-            success: true,
-            message: deletedBook
-        });
-    } catch (e) {
-        console.log(e);
-        res.status(500).json({
-            error: "Internal Server Error"
-        });
-    }
+    const deletedBook = await bookService.deleteBook(id);
+
+    return res.status(200).json({
+      success: true,  
+      message: deletedBook
+    });
+
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message
+    });
+  }
 };
