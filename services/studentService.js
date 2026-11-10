@@ -6,9 +6,11 @@ export const fetchAllStudents = async () => {
   return await studentModel.fetchAllStudents();
 };
 
+const srCodePattern = /^\d{2}-\d{5}$/;
+
 const doesStudentExist = async (student) => {
   let existing;
-  if(Object.hasOwn(student, 'id')) {
+  if (Object.hasOwn(student, 'id')) {
     existing = await studentModel.findStudentById(student.id);
   } else {
     existing = await studentModel.findStudentByNameAndSrcode(student);
@@ -22,7 +24,14 @@ const doesStudentExist = async (student) => {
 
 export const createStudent = async (student) => {
   if (!student.name || !student.srcode || !student.program) {
-    throw new ValidationError(404, 'Name, SR code, and program are required');
+    throw new ValidationError(400, 'Name, SR code, and program are required');
+  }
+
+  if (!srCodePattern.test(student.srcode)) {
+    throw new ValidationError(
+      400,
+      'Invalid SR Code format! Use YY-XXXXX (e.g., 24-18769)'
+    );
   }
 
   const existing = await doesStudentExist(student);
@@ -37,7 +46,14 @@ export const createStudent = async (student) => {
 
 export const updateStudent = async (student) => {
   if (!student.name || !student.srcode || !student.program) {
-    throw new ValidationError(404, 'Name, SR code, and program are required');
+    throw new ValidationError(400, 'Name, SR code, and program are required');
+  }
+
+  if (!srCodePattern.test(student.srcode)) {
+    throw new ValidationError(
+      400,
+      'Invalid SR Code format! Use YY-XXXXX (e.g., 24-18769)'
+    );
   }
 
   const existing = await doesStudentExist(student);
