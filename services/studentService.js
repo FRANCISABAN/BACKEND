@@ -74,5 +74,5 @@ export const deleteStudent = async (id) => {
   }
 
   const deletedStudent = await studentModel.remove(id);
-  return deletedStudent;
+  return deletedStudent;.2
 };
